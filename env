@@ -1,0 +1,12 @@
+# 服务器配置
+PORT=3000
+NODE_ENV=production
+
+# 数据库配置
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=123456 #（生产环境中请修改）
+DB_NAME=daily_mood
+
+# 安全配置（生产环境中请修改）
+# SESSION_SECRET=your_session_secret_here

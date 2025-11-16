@@ -1,0 +1,552 @@
+:root {
+  --glass-bg: rgba(255,255,255,0.25);
+  --glass-strong: rgba(255,255,255,0.35);
+  --primary-color: rgba(74,144,226,0.9);
+  --secondary-color: rgba(156,163,175,0.8);
+  --success-color: rgba(34,197,94,0.9);
+  --warning-color: rgba(251,191,36,0.9);
+  --danger-color: rgba(239,68,68,0.9);
+  --shadow-light: 0 8px 32px rgba(0,0,0,0.15);
+  --shadow-medium: 0 12px 40px rgba(0,0,0,0.25);
+  --shadow-heavy: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+/* 全局样式 */
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Microsoft YaHei", "SF Pro Display", Arial, sans-serif;
+  color: #111;
+  overflow: hidden;
+}
+
+/* 全屏背景视频样式（如已使用视频背景） */
+#bgVideo {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* body / 布局 */
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  margin: 0;
+  height: 100vh;
+}
+
+/* 主容器 - 强化毛玻璃效果 */
+.page {
+  width: min(650px, 95%);
+  max-height: 95vh;
+  background: linear-gradient(135deg, 
+    rgba(255,255,255,0.12) 0%, 
+    rgba(255,255,255,0.06) 50%, 
+    rgba(255,255,255,0.08) 100%);
+  border-radius: 28px;
+  padding: 36px;
+  box-shadow: 
+    0 25px 50px rgba(0,0,0,0.25),
+    0 0 0 1px rgba(255,255,255,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  backdrop-filter: blur(25px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.18);
+  overflow-y: auto;
+  position: relative;
+  z-index: 10;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 顶部标题 */
+.main-header {
+  text-align: center;
+  margin-bottom: 32px;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+  transition: all 0.3s ease;
+}
+
+.title:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.subtitle {
+  font-size: 16px;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* 日记输入区域 */
+.diary-section {
+  margin-bottom: 28px;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+/* 限制父容器高度，避免子元素被拉伸超出视口 */
+.diary-wrapper {
+  position: relative;
+  background: var(--glass-strong);
+  backdrop-filter: blur(20px) saturate(1.1);
+  border-radius: 20px;
+  padding: 6px;
+  box-shadow: 
+    var(--shadow-light),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  /* 最大高度基于视口：确保整个卡片不会超出 .page 可视区域 */
+  max-height: 48vh;          /* 可根据需要微调（例如 44vh / 50vh） */
+  overflow: visible;        /* 允许内部 textarea 自身滚动，不让整个卡片出现滚动条 */
+  display: block;
+}
+
+.diary-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--shadow-medium),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.diary-wrapper:focus-within {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 40px rgba(74,144,226,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    0 0 0 2px rgba(74,144,226,0.3);
+}
+
+/* textarea：限制最大高度、保留垂直调整但不会超出限制 */
+#diary {
+  width: 100%;
+  min-height: 140px;
+  /* 限制 textarea 最大高度，避免拖动将其超出视口或父容器 */
+  max-height: min(480px, 40vh);
+  padding: 24px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.18);
+  resize: vertical;
+  overflow: auto;            /* 内容溢出时在 textarea 内部滚动 */
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  transition: box-shadow 0.18s ease, background-color 0.18s ease;
+  font-family: inherit;
+  will-change: height;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 焦点样式（轻量） */
+#diary:focus {
+  outline: none;
+  background: rgba(255,255,255,0.28);
+  color: #222;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* 占位符 */
+#diary::placeholder {
+  color: rgba(0,0,0,0.45);
+  transition: opacity 0.3s ease;
+}
+
+#diary:focus::placeholder {
+  opacity: 0.7;
+}
+
+/* 字数计数（保持在父容器内） */
+.char-count {
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  background: rgba(0,0,0,0.25);
+  padding: 6px 10px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+/* ------------------------------
+   内置滚动条样式（textarea / .page）
+   简约风格：窄、半透明、圆角
+   ------------------------------ */
+
+/* WebKit 浏览器（Chrome, Edge, Safari） */
+#diary::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#diary::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+#diary::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.06); /* 轻微内边框制造“镂空”感 */
+}
+
+#diary::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+/* 全局页面滚动条也做简约处理（如果出现时） */
+.page::-webkit-scrollbar {
+  width: 10px;
+}
+.page::-webkit-scrollbar-track {
+  background: transparent;
+}
+.page::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.25);
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.02);
+}
+
+/* Firefox */
+#diary {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+
+/* 心情选择区域 */
+.mood-section {
+  margin-bottom: 28px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.mood-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px) saturate(1.1);
+  border: none;
+  border-radius: 18px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  border: 2px solid rgba(255,255,255,0.15);
+  position: relative;
+  overflow: hidden;
+  transform-origin: center;
+}
+
+.mood-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mood-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-medium);
+  background: var(--glass-strong);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.mood-card:hover::before {
+  opacity: 1;
+}
+
+.mood-card:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.mood-card.selected {
+  border-color: rgba(255,255,255,0.5);
+  background: var(--glass-strong);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-medium);
+  animation: cardSelect 0.4s ease-out;
+}
+
+@keyframes cardSelect {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+  100% { transform: translateY(-4px) scale(1.01); }
+}
+
+.mood-emoji {
+  font-size: 42px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+  transition: all 0.3s ease;
+}
+
+.mood-card:hover .mood-emoji {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
+}
+
+.mood-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 6px;
+}
+
+.mood-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+}
+
+/* 特定心情状态颜色 */
+.mood-card[data-mood="low"].selected {
+  background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(220,38,38,0.18));
+  border-color: rgba(239,68,68,0.5);
+  box-shadow: 0 12px 30px rgba(239,68,68,0.2);
+}
+
+.mood-card[data-mood="medium"].selected {
+  background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(245,158,11,0.18));
+  border-color: rgba(251,191,36,0.5);
+  box-shadow: 0 12px 30px rgba(251,191,36,0.2);
+}
+
+.mood-card[data-mood="high"].selected {
+  background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(22,163,74,0.18));
+  border-color: rgba(34,197,94,0.5);
+  box-shadow: 0 12px 30px rgba(34,197,94,0.2);
+}
+
+/* 操作按钮区域 */
+.action-section {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255,255,255,0.15);
+  min-width: 150px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-medium);
+}
+
+.action-btn:hover::before {
+  opacity: 1;
+}
+
+.action-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--primary-color), rgba(59,130,246,0.8));
+  color: white;
+  box-shadow: var(--shadow-light);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(135deg, rgba(59,130,246,0.95), rgba(37,99,235,0.9));
+  box-shadow: 0 15px 35px rgba(74,144,226,0.3);
+}
+
+.action-btn.secondary {
+  background: var(--glass-strong);
+  color: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.action-btn.secondary:hover {
+  background: rgba(255,255,255,0.4);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.btn-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  transition: transform 0.3s ease;
+}
+
+.action-btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+/* 浮动提示 */
+.toast {
+  position: fixed;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-120px);
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  padding: 6px;
+  z-index: 1000;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-heavy);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.toast[aria-hidden="false"] {
+  transform: translateX(-50%) translateY(0);
+  animation: toastSlideIn 0.5s ease-out;
+}
+
+@keyframes toastSlideIn {
+  0% {
+    transform: translateX(-50%) translateY(-120px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px) scale(1.05);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.toast-icon {
+  font-size: 18px;
+  animation: toastIconBounce 0.6s ease-out 0.2s;
+}
+
+@keyframes toastIconBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* 入场动画 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 浮动装饰元素 */
+.floating-elements {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.float-element {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0.7;
+  animation: float var(--duration, 10s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25));
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.7;
+  }
+  25% {
+    transform: translateY(-30px) rotate(8deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-15px) rotate(-5deg);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateY(-35px) rotate(3deg);
+    opacity: 0.8;
+  }
+}

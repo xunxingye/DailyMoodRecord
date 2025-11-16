@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>心情历史</title>
+  <link rel="stylesheet" href="css/history.css">
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bgVideo" autoplay muted loop playsinline>
+    <!-- 请根据你项目的实际路径调整 src（这里假设 img/CatCoffe.mp4 在项目根的 img 文件夹下） -->
+    <source src="img/CatCoffe.mp4" type="video/mp4">
+    您的浏览器不支持视频标签。
+  </video>
+
+  <main class="page">
+    <!-- 顶部标题区 -->
+    <header class="cal-header">
+      <button class="nav-btn" id="prevBtn">◀</button>
+      <div class="month-year" id="monthYear">加载中...</div>
+      <button class="nav-btn" id="nextBtn">▶</button>
+    </header>
+
+    <!-- 图例 -->
+    <div class="legend"></div>
+
+    <!-- 日历网格 -->
+    <div class="weekdays"></div>
+    <div class="calendar-grid" id="calendar"></div>
+  </main>
+
+  <!-- 详情模态框 -->
+  <div id="detailModal" class="modal" aria-hidden="true">
+    <div class="modal-inner">
+      <!-- 内容由JavaScript动态填充 -->
+    </div>
+  </div>
+
+  <script src="js/history.js"></script>
+</body>
+</html>
